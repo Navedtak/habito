@@ -1,51 +1,81 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme, Theme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function SettingsScreen() {
   const theme = useTheme();
+  const { user, signOut } = useAuth();
   const styles = makeStyles(theme);
 
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.scroll}>
-        <Text style={styles.pageTitle}>War Room</Text>
+        <View style={styles.tabHeader}>
+          <Text style={styles.tabLogo}>⚙️ Settings</Text>
+          <Text style={styles.tabSubtitle}>Your rules. Your discipline.</Text>
+        </View>
 
         {/* ── Appearance ── */}
         <Text style={styles.sectionLabel}>Appearance</Text>
-        <View style={styles.row}>
-          <Text style={styles.rowEmoji}>{theme.isDark ? '🌙' : '☀️'}</Text>
-          <View style={styles.rowMeta}>
-            <Text style={styles.rowTitle}>{theme.isDark ? 'Night Mode' : 'Day Mode'}</Text>
-            <Text style={styles.rowSub}>
-              {theme.isDark ? 'Dark. Like your will to quit.' : 'Light. Like your future.'}
-            </Text>
+        <View style={styles.group}>
+          <View style={styles.row}>
+            <Text style={styles.rowEmoji}>{theme.isDark ? '🌙' : '☀️'}</Text>
+            <View style={styles.rowMeta}>
+              <Text style={styles.rowTitle}>{theme.isDark ? 'Night Mode' : 'Day Mode'}</Text>
+              <Text style={styles.rowSub}>
+                {theme.isDark ? 'Dark. Like your will to quit.' : 'Light. Like your future.'}
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={[styles.toggle, theme.isDark && styles.toggleOn]}
+              onPress={theme.toggle}
+              activeOpacity={0.8}
+            >
+              <View style={[styles.toggleKnob, theme.isDark && styles.toggleKnobOn]} />
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            style={[styles.toggle, theme.isDark && styles.toggleOn]}
-            onPress={theme.toggle}
-            activeOpacity={0.8}
-          >
-            <View style={[styles.toggleKnob, theme.isDark && styles.toggleKnobOn]} />
-          </TouchableOpacity>
         </View>
 
         {/* ── Coming soon ── */}
-        <Text style={[styles.sectionLabel, { marginTop: 28 }]}>Coming Soon</Text>
+        <Text style={[styles.sectionLabel, { marginTop: 32 }]}>Coming Soon</Text>
+        <View style={styles.group}>
+          {[
+            { emoji: '🔔', title: 'Daily Reminders',    sub: 'No one will wake you up. Set your own alarm.' },
+            { emoji: '🎯', title: 'Daily Goal',          sub: 'How many habits per day defines you?' },
+            { emoji: '📤', title: 'Export War Log',      sub: 'Proof you showed up. Share it.' },
+          ].map((item, idx, arr) => (
+            <View key={item.title}>
+              <View style={[styles.row, styles.rowDisabled]}>
+                <Text style={styles.rowEmoji}>{item.emoji}</Text>
+                <View style={styles.rowMeta}>
+                  <Text style={[styles.rowTitle, { color: theme.textSecondary }]}>{item.title}</Text>
+                  <Text style={styles.rowSub}>{item.sub}</Text>
+                </View>
+              </View>
+              {idx < arr.length - 1 && <View style={styles.divider} />}
+            </View>
+          ))}
+        </View>
 
-        {[
-          { emoji: '🔔', title: 'Daily Reminders',    sub: 'No one will wake you up. Set your own alarm.' },
-          { emoji: '🎯', title: 'Daily Goal',          sub: 'How many habits per day defines you?' },
-          { emoji: '📤', title: 'Export War Log',      sub: 'Proof you showed up. Share it.' },
-        ].map(item => (
-          <View key={item.title} style={[styles.row, styles.rowDisabled]}>
-            <Text style={styles.rowEmoji}>{item.emoji}</Text>
+        {/* ── Account ── */}
+        <Text style={[styles.sectionLabel, { marginTop: 32 }]}>Account</Text>
+        <View style={styles.group}>
+          <View style={styles.row}>
+            <Text style={styles.rowEmoji}>👤</Text>
             <View style={styles.rowMeta}>
-              <Text style={[styles.rowTitle, { color: theme.textSecondary }]}>{item.title}</Text>
-              <Text style={styles.rowSub}>{item.sub}</Text>
+              <Text style={styles.rowTitle}>Signed in as</Text>
+              <Text style={styles.rowSub} numberOfLines={1}>{user?.email}</Text>
             </View>
           </View>
-        ))}
+          <View style={styles.divider} />
+          <TouchableOpacity style={[styles.row, styles.signOutRow]} onPress={signOut} activeOpacity={0.75}>
+            <Text style={styles.rowEmoji}>🚪</Text>
+            <View style={styles.rowMeta}>
+              <Text style={[styles.rowTitle, styles.signOutText]}>Sign Out</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
 
         {/* ── Quote ── */}
         <View style={styles.quoteCard}>
@@ -64,80 +94,79 @@ function makeStyles(t: Theme) {
     root:   { flex: 1, backgroundColor: t.bg },
     scroll: { flex: 1, paddingHorizontal: 20, paddingBottom: 40 },
 
-    pageTitle: {
-      fontSize: 28,
-      fontWeight: '800',
-      color: t.textPrimary,
-      paddingTop: 16,
-      marginBottom: 20,
-    },
+    tabHeader:   { paddingTop: 18, marginBottom: 24 },
+    tabLogo:     { fontSize: 26, fontWeight: '800', color: t.textPrimary, letterSpacing: -0.5 },
+    tabSubtitle: { fontSize: 15, color: t.textSecondary, marginTop: 3 },
 
     sectionLabel: {
-      fontSize: 12,
-      fontWeight: '700',
-      color: t.textSecondary,
-      letterSpacing: 0.8,
-      textTransform: 'uppercase',
-      marginBottom: 10,
+      fontSize: 13, fontWeight: '600', color: t.textSecondary,
+      letterSpacing: 0.2, marginBottom: 8, marginLeft: 4,
     },
 
+    group: {
+      backgroundColor: t.card,
+      borderRadius: 20,
+      overflow: 'hidden',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: t.isDark ? 4 : 2 },
+      shadowOpacity: t.isDark ? 0.35 : 0.07,
+      shadowRadius: t.isDark ? 16 : 10,
+      elevation: 3,
+      borderWidth: t.isDark ? StyleSheet.hairlineWidth : 0,
+      borderColor: t.border,
+    },
+    divider: {
+      height: StyleSheet.hairlineWidth,
+      backgroundColor: t.border,
+      marginLeft: 60,
+    },
     row: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: t.card,
-      borderRadius: 14,
-      paddingVertical: 14,
-      paddingHorizontal: 16,
-      marginBottom: 10,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: t.isDark ? 0.3 : 0.05,
-      shadowRadius: 4,
-      elevation: 1,
+      paddingVertical: 16,
+      paddingHorizontal: 18,
     },
-    rowDisabled: { opacity: 0.55 },
-    rowEmoji:    { fontSize: 24, marginRight: 14 },
+    rowDisabled: { opacity: 0.45 },
+    rowEmoji:    { fontSize: 22, marginRight: 16, width: 26, textAlign: 'center' },
     rowMeta:     { flex: 1 },
-    rowTitle:    { fontSize: 15, fontWeight: '700', color: t.textPrimary },
-    rowSub:      { fontSize: 12, color: t.textSecondary, marginTop: 2 },
+    rowTitle:    { fontSize: 17, fontWeight: '600', color: t.textPrimary },
+    rowSub:      { fontSize: 15, color: t.textSecondary, marginTop: 2, lineHeight: 22 },
 
     toggle: {
-      width: 50,
-      height: 28,
-      borderRadius: 14,
+      width: 51,
+      height: 31,
+      borderRadius: 100,
       backgroundColor: t.track,
       justifyContent: 'center',
       paddingHorizontal: 3,
     },
-    toggleOn:      { backgroundColor: t.purple },
-    toggleKnob:    {
-      width: 22,
-      height: 22,
-      borderRadius: 11,
+    toggleOn:   { backgroundColor: t.purple },
+    toggleKnob: {
+      width: 25,
+      height: 25,
+      borderRadius: 100,
       backgroundColor: '#fff',
       shadowColor: '#000',
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.2,
-      shadowRadius: 2,
-      elevation: 2,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 3,
     },
-    toggleKnobOn:  { alignSelf: 'flex-end' },
+    toggleKnobOn: { alignSelf: 'flex-end' },
 
     quoteCard: {
-      marginTop: 28,
-      backgroundColor: t.card,
-      borderRadius: 16,
+      marginTop: 32,
+      backgroundColor: t.card2,
+      borderRadius: 20,
       padding: 20,
-      borderLeftWidth: 4,
-      borderLeftColor: t.purple,
     },
     quoteText: {
-      fontSize: 14,
-      fontStyle: 'italic',
-      color: t.textPrimary,
-      lineHeight: 22,
-      marginBottom: 8,
+      fontSize: 15, fontStyle: 'italic', color: t.textPrimary,
+      lineHeight: 24, marginBottom: 10,
     },
-    quoteAuthor: { fontSize: 13, fontWeight: '700', color: t.purple },
+    quoteAuthor: { fontSize: 14, fontWeight: '600', color: t.purple },
+
+    signOutRow:  {},
+    signOutText: { color: '#FF453A' },
   });
 }

@@ -164,7 +164,7 @@ function makeStyles(t: Theme) {
       paddingVertical: 8,
       paddingHorizontal: 4,
     },
-    skipText: { fontSize: 14, fontWeight: '600', color: 'rgba(255,255,255,0.55)' },
+    skipText: { fontSize: 16, fontWeight: '600', color: 'rgba(255,255,255,0.55)' },
 
     card: {
       backgroundColor: t.card,
@@ -182,7 +182,7 @@ function makeStyles(t: Theme) {
 
     emoji: { fontSize: 68, marginBottom: 20 },
     title: {
-      fontSize: 22,
+      fontSize: 24,
       fontWeight: '900',
       color: t.textPrimary,
       textAlign: 'center',
@@ -190,10 +190,10 @@ function makeStyles(t: Theme) {
       letterSpacing: 0.2,
     },
     body: {
-      fontSize: 15,
+      fontSize: 17,
       color: t.textSecondary,
       textAlign: 'center',
-      lineHeight: 23,
+      lineHeight: 26,
       marginBottom: 28,
     },
 
@@ -210,7 +210,7 @@ function makeStyles(t: Theme) {
       alignItems: 'center',
       justifyContent: 'center',
     },
-    backText: { color: t.textSecondary, fontSize: 14, fontWeight: '700' },
+    backText: { color: t.textSecondary, fontSize: 16, fontWeight: '700' },
     nextBtn: {
       flex: 1,
       paddingVertical: 14,
@@ -219,8 +219,8 @@ function makeStyles(t: Theme) {
       alignItems: 'center',
     },
     nextBtnFull: { flex: 1 },
-    nextText: { color: '#fff', fontSize: 15, fontWeight: '700' },
+    nextText: { color: '#fff', fontSize: 17, fontWeight: '700' },
 
-    stepCount: { fontSize: 11, color: t.textSecondary, fontWeight: '500' },
+    stepCount: { fontSize: 13, color: t.textSecondary, fontWeight: '500' },
   });
 }

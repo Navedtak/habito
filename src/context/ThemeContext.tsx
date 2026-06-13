@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState } from 'react';
 export type Theme = {
   bg: string;
   card: string;
+  card2: string;
   textPrimary: string;
   textSecondary: string;
   border: string;
@@ -12,42 +13,47 @@ export type Theme = {
   pillText: string;
   emojiBtnBg: string;
   overlay: string;
+  tabBar: string;
   isDark: boolean;
   toggle: () => void;
 };
 
 const light: Omit<Theme, 'isDark' | 'toggle'> = {
-  bg: '#F8F7FF',
-  card: '#FFFFFF',
-  textPrimary: '#1F2937',
-  textSecondary: '#9CA3AF',
-  border: '#E5E7EB',
-  track: '#E5E7EB',
-  purple: '#7C3AED',
-  pillBg: '#EDE9FE',
-  pillText: '#7C3AED',
-  emojiBtnBg: '#F3F4F6',
-  overlay: 'rgba(0,0,0,0.40)',
+  bg:            '#F2F2F7',
+  card:          '#FFFFFF',
+  card2:         '#F2F2F7',
+  textPrimary:   '#000000',
+  textSecondary: '#6C6C70',
+  border:        'rgba(60,60,67,0.13)',
+  track:         '#E5E5EA',
+  purple:        '#AF52DE',
+  pillBg:        '#F3E8FF',
+  pillText:      '#AF52DE',
+  emojiBtnBg:    '#EBEBF0',
+  overlay:       'rgba(0,0,0,0.40)',
+  tabBar:        'rgba(242,242,247,0.92)',
 };
 
 const dark: Omit<Theme, 'isDark' | 'toggle'> = {
-  bg: '#0D0D14',
-  card: '#1A1A28',
-  textPrimary: '#F3F4F6',
-  textSecondary: '#9CA3AF', // was #6B7280 — too dark on dark cards (~3.9:1), now ~6.5:1
-  border: '#3A3A58',        // was #2A2A3E — future day numbers were near-invisible
-  track: '#252545',         // was #2A2A3E — calendar cells need contrast against day numbers
-  purple: '#9061F9',        // was #7C3AED — brighter for dark surfaces, keeps AA at small sizes
-  pillBg: '#2D1F52',
-  pillText: '#C4B5FD',      // was #A78BFA — slightly brighter for pill labels
-  emojiBtnBg: '#262645',    // was #252535 — more distinct from card background
-  overlay: 'rgba(0,0,0,0.65)',
+  bg:            '#000000',
+  card:          '#1C1C1E',
+  card2:         '#2C2C2E',
+  textPrimary:   '#FFFFFF',
+  textSecondary: '#8E8E93',
+  border:        'rgba(255,255,255,0.10)',
+  track:         '#2C2C2E',
+  purple:        '#BF5AF2',
+  pillBg:        '#2D1F52',
+  pillText:      '#D8A8F8',
+  emojiBtnBg:    '#3A3A3C',
+  overlay:       'rgba(0,0,0,0.70)',
+  tabBar:        'rgba(28,28,30,0.92)',
 };
 
 const ThemeContext = createContext<Theme | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(true);
   const toggle = () => setIsDark(d => !d);
   return (
     <ThemeContext.Provider value={{ ...(isDark ? dark : light), isDark, toggle }}>

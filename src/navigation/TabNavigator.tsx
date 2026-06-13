@@ -1,5 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Text } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import HomeScreen from '../screens/HomeScreen';
 import ChallengesScreen from '../screens/ChallengesScreen';
 import StatsScreen from '../screens/StatsScreen';
@@ -8,36 +9,49 @@ import { useTheme } from '../context/ThemeContext';
 
 const Tab = createBottomTabNavigator();
 
-const icons: Record<string, { active: string; inactive: string }> = {
-  Home:       { active: '🏠', inactive: '🏡' },
-  Challenges: { active: '🏆', inactive: '🥈' },
-  Stats:      { active: '📊', inactive: '📈' },
-  Settings:   { active: '⚙️', inactive: '🔧' },
-};
+type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
-function TabIcon({ name, focused }: { name: string; focused: boolean }) {
-  return (
-    <Text style={{ fontSize: 22 }}>
-      {focused ? icons[name].active : icons[name].inactive}
-    </Text>
-  );
-}
+const ICONS: Record<string, { active: IoniconName; inactive: IoniconName }> = {
+  Home:       { active: 'home',      inactive: 'home-outline' },
+  Challenges: { active: 'trophy',    inactive: 'trophy-outline' },
+  Stats:      { active: 'bar-chart', inactive: 'bar-chart-outline' },
+  Settings:   { active: 'settings',  inactive: 'settings-outline' },
+};
 
 export default function TabNavigator() {
   const theme = useTheme();
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarIcon: ({ focused }) => <TabIcon name={route.name} focused={focused} />,
+        tabBarIcon: ({ focused, color }) => {
+          const icon = ICONS[route.name];
+          return (
+            <View style={[styles.iconWrap, focused && { backgroundColor: theme.purple + '22' }]}>
+              <Ionicons
+                name={focused ? icon.active : icon.inactive}
+                size={22}
+                color={color}
+              />
+            </View>
+          );
+        },
         tabBarActiveTintColor: theme.purple,
         tabBarInactiveTintColor: theme.textSecondary,
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: '500',
+          marginTop: -2,
+          letterSpacing: 0.1,
+        },
         tabBarStyle: {
-          backgroundColor: theme.card,
-          borderTopWidth: 0,
-          height: 80,
-          paddingBottom: 16,
-          paddingTop: 8,
+          backgroundColor: theme.tabBar,
+          borderTopWidth: StyleSheet.hairlineWidth,
+          borderTopColor: theme.border,
+          height: 83,
+          paddingBottom: 20,
+          paddingTop: 10,
         },
       })}
     >
@@ -48,3 +62,13 @@ export default function TabNavigator() {
     </Tab.Navigator>
   );
 }
+
+const styles = StyleSheet.create({
+  iconWrap: {
+    width: 44,
+    height: 28,
+    borderRadius: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
